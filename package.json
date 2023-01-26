@@ -1,0 +1,27 @@
+{
+  "name": "crew_analysis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/savannahvel/crew_analysis.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/savannahvel/crew_analysis/issues"
+  },
+  "homepage": "https://github.com/savannahvel/crew_analysis#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.2.4",
+    "mysql2": "^3.0.1",
+    "nodemon": "^2.0.20"
+  }
+}
