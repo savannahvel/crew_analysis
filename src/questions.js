@@ -1,7 +1,10 @@
-const { default: ListPrompt } = require("inquirer/lib/prompts/list");
+const { getNames } = require('./queryHelper');
+const sqlStatements = require('./sqlStatements');
+const inquirer = require('inquirer');
+
 
 function navigationQuestions() {
-    return [
+    const questions = [
         {
             type: 'list',
             message: 'What would you like to do?',
@@ -9,21 +12,23 @@ function navigationQuestions() {
                 'View all departments',
                 'View all roles',
                 'View all employees',
-                'View employees by manager',  // Bonus question if time
-                'View employees by department',  // Bonus question if time
-                'View total utilized budget of a department', // Bonus question if time
+                // 'View employees by manager',  // Bonus question if time
+                // 'View employees by department',  // Bonus question if time
+                // 'View total utilized budget of a department', // Bonus question if time
                 'Add a department',
                 'Add a role',
                 'Add an employee',
                 'Update an employee role',
-                'Update an employee\'s manager', // Bonus question if time
-                'Remove a department',  // Bonus question if time
-                'Remove a role',  // Bonus question if time
-                'Remove an employee'  // Bonus question if time
+                // 'Update an employee\'s manager', // Bonus question if time
+                // 'Remove a department',  // Bonus question if time
+                // 'Remove a role',  // Bonus question if time
+                // 'Remove an employee'  // Bonus question if time,
             ],
             name: 'navigate'
         }
     ]
+
+    return inquirer.prompt(questions);
 }
 
 function addDepartmentQuestions() {
@@ -36,27 +41,31 @@ function addDepartmentQuestions() {
     ]
 }
 
-function addRoleQuestions() { 
-    /**
-     * TODO: Add logic to pull from the DB and get a list of departments? Then have that department list be available to select from
-     */
-    return [
-        {
-            type: 'input',
-            message: 'What is the name of the position?',
-            name: 'addRoleName'
-        },
-        {
-            type: 'input',
-            message: 'What is the salary for this role?',
-            name: 'addRoleSalary'
-        },
-        {
-            type: 'input',
-            message: 'Which department does this role belong to?',
-            name: 'addRoleDepartment'
-        }
-    ]
+function addRoleQuestions() {
+    getNames('viewAllDepartments').then((data) => {
+        const questions = [
+            {
+                type: 'input',
+                message: 'What is the name of the position?',
+                name: 'addRoleName'
+            },
+            {
+                type: 'input',
+                message: 'What is the salary for this role?',
+                name: 'addRoleSalary'
+            },
+            {
+                type: 'list',
+                message: 'Which department does this role belong to?',
+                // choices: departmentList,
+                choices: data,
+                name: 'addRoleDepartment'
+            }
+        ]
+        inquirer.prompt(questions).then((resp) => {
+            console.log(resp); // returns an object
+        })
+    })    
 }
 
 function addEmployeeQuestions() {
