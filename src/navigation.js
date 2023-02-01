@@ -49,7 +49,6 @@ module.exports = function navigation() {
             else if (response[key] === 'Add an employee') {
                 
                 getTitles().then((roleList) => {
-                    console.log(roleList)
                     getNames('viewAllManagers').then(async (managerList) => {
                         await addEmployeeQuestions(roleList, managerList).then((async (data) => {
                             
@@ -84,7 +83,6 @@ module.exports = function navigation() {
                                 }
                             }
                             const updateEmployee = await sqlQueryWithVariables(sqlStatements.updateEmployeeRole, updateEmployeeVariables);
-                            console.log(updateEmployee)
                             const showEmployeeVariables = [updateEmployeeVariables[1],updateEmployeeVariables[2]]
                             const showEmployee = await sqlQueryWithVariables(sqlStatements.viewEmployee, showEmployeeVariables);
                             console.table(showEmployee);
