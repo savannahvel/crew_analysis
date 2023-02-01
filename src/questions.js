@@ -1,5 +1,3 @@
-const { getNames } = require('./queryHelper');
-const sqlStatements = require('./sqlStatements');
 const inquirer = require('inquirer');
 
 
@@ -12,17 +10,10 @@ function navigationQuestions() {
                 'View all departments',
                 'View all roles',
                 'View all employees',
-                // 'View employees by manager',  // Bonus question if time
-                // 'View employees by department',  // Bonus question if time
-                // 'View total utilized budget of a department', // Bonus question if time
                 'Add a department',
                 'Add a role',
                 'Add an employee',
                 'Update an employee role',
-                // 'Update an employee\'s manager', // Bonus question if time
-                // 'Remove a department',  // Bonus question if time
-                // 'Remove a role',  // Bonus question if time
-                // 'Remove an employee'  // Bonus question if time,
             ],
             name: 'navigate'
         }
@@ -32,17 +23,19 @@ function navigationQuestions() {
 }
 
 function addDepartmentQuestions() {
-    return [
+    const questions = [
         {
             type: 'input',
             message: 'What is the department name?',
             name: 'addDepartment'
         }
     ]
+    return inquirer.prompt(questions);
 }
 
-function addRoleQuestions() {
-    getNames('viewAllDepartments').then((data) => {
+//creating new promise to better control asynchronous callbacks, since this will be daisy chained off of another promise
+function addRoleQuestions(nameArray) {
+    return new Promise((resolve, reject) => {
         const questions = [
             {
                 type: 'input',
@@ -57,76 +50,69 @@ function addRoleQuestions() {
             {
                 type: 'list',
                 message: 'Which department does this role belong to?',
-                // choices: departmentList,
-                choices: data,
+                choices: nameArray,
                 name: 'addRoleDepartment'
             }
         ]
-        inquirer.prompt(questions).then((resp) => {
-            console.log(resp); // returns an object
-        })
-    })    
+        return resolve(inquirer.prompt(questions))
+    })
 }
 
-function addEmployeeQuestions() {
+function addEmployeeQuestions(roleArray, managerArray) {
+    return new Promise((resolve, reject) => {
+        const questions = [
+            {
+                type: 'input',
+                message: 'What is the employee\'s first name?',
+                name: 'employeeFirstName'
+            },
+            {
+                type: 'input',
+                message: 'What is the employee\'s last name?',
+                name: 'employeeLastName'
+            },
+            {
+                type: 'list',
+                message: 'What is the employee\'s role?',
+                choices: roleArray,
+                name: 'employeeRole'
+            },
+            {
+                type: 'list',
+                message: 'Who is the employee\'s manager?',
+                choices: managerArray,
+                name: 'employeeManager'
+            },
+        ]
+        return resolve(inquirer.prompt(questions))
+    })
+}
+
+function updateEmployeeQuestions(employeeArray, roleArray) {
+    return new Promise((resolve, reject) => {
+        const questions = [
+            {
+                type: 'list',
+                message: 'Which employee do you want to update?',
+                choices: employeeArray,
+                name: "updateEmployeeName"
+            },
+            {
+                type: 'list',
+                message: 'Which role do you want to assign to the employee?',
+                choices: roleArray,
+                name: 'updateEmployeeRole'
+            }
+        ]
+        return resolve(inquirer.prompt(questions));
+    })
     
-    return [
-        {
-            type: 'input',
-            message: 'What is the employee\'s first name?',
-            name: 'employeeFirstName'
-        },
-        {
-            type: 'input',
-            message: 'What is the employee\'s last name?',
-            name: 'employeeLastName'
-        },
-        {
-            type: 'input',
-            message: 'What is the employee\'s first name?',
-            name: 'employeeFirstName'
-        },
-        {
-            type: 'input',
-            message: 'What is the employee\'s role?',
-            name: 'employeeRole'
-        },
-        {
-            type: 'input',
-            message: 'Who is the employee\'s manager?',
-            name: 'employeeManager'
-        },
-        {
-            type: 'input',
-            message: 'What is the employee\'s first name?',
-            name: 'employeeFirstName'
-        }
-    ]
 }
-
-function updateEmployeeQuestions() {
-    return [
-        {
-            type: 'input',
-            message: 'Which employee do you want to update?',
-            name: "updateEmployeeName"
-        },
-        {
-            type: 'input', //will be list
-            message: 'Which role do you want to assign to the employee?',
-            name: 'updateEmployeeRole'
-        }
-    ]
-}
-
-
-
-
-
 
 module.exports = {
     navigationQuestions,
     addDepartmentQuestions,
     addRoleQuestions,
-    addEmployeeQuestions
+    addEmployeeQuestions,
+    updateEmployeeQuestions,
 };
